@@ -7,9 +7,12 @@ public class PlayerController : MonoBehaviour {
     public float speed = 6.0F;
     public float jumpHeight = 6.0F;
     private Rigidbody rb;
+    private float distToGround;
 
     void Start()
     {
+        Collider col = this.GetComponent<Collider>();
+        distToGround = col.bounds.extents.y;
         Cursor.lockState = CursorLockMode.Locked;
         rb = GetComponent<Rigidbody>();
     }
@@ -24,8 +27,12 @@ public class PlayerController : MonoBehaviour {
 
         if (Input.GetKeyDown("escape"))
             Cursor.lockState = CursorLockMode.None;
-        if (Input.GetKeyDown("space"))
+        if (Input.GetKeyDown("space") && IsGrounded())
             rb.AddForce(Vector3.up * jumpHeight);
+    }
+
+    bool IsGrounded() {
+   return Physics.Raycast(transform.position, -Vector3.up, distToGround + 0.1f);
     }
 }
 

@@ -3,36 +3,43 @@ using System.Collections;
 
 public class platformMovement : MonoBehaviour {
 
-	public float speed = 6.0F;
-	private int direction = 1;
-	// Use this for initialization
-	void Start () {
+    public Transform movingPlatform;
+    public Transform position1;
+    public Transform position2;
+    public Vector3 newPosition;
+    public string currentState;
+    public float smooth;
+    public float resetTime;
 
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    //Use this for initialization
+    void Start()
+    {
+        ChangeTarget();
+    }
 
+    //Update is called once per frame
+    void FixedUpdate()
+    {
+        movingPlatform.position = Vector3.Lerp(movingPlatform.position, newPosition, smooth * Time.deltaTime);
 
-		transform.Translate(Vector3.forward * speed * direction * Time.deltaTime);
-	}
-	void OnTriggerEnter(Collider other)
-	{
-		if(other.tag == "Target")
-		{
-			if(direction == 1)
-				direction = -1;
-			else
-				direction = 1;
-		}
-		if(other.tag == "Player")
-			other.transform.parent = transform;
-	}
-	void OnTriggerExit(Collider other)
-	{
-		if(other.tag == "Player")
-		{
-			other.transform.parent = null;
-		}
-	}
+    }
+    void ChangeTarget()
+    {
+        if(currentState == "Moving To Position 1")
+        {
+            currentState = "Moving To Position 2";
+            newPosition = position2.position;
+        }
+        else if(currentState == "Moving To Position 2")
+        {
+            currentState = "Moving To Position 1";
+            newPosition = position1.position;
+        }
+        else if (currentState == "")
+        {
+            currentState = "Moving To Position 2";
+            newPosition = position2.position;
+        }
+        Invoke ("ChangeTarget", resetTime);
+    }
 }
